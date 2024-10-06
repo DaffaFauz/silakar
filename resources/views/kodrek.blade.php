@@ -44,11 +44,18 @@
                                     <td>{{ $no++ }}</td>
                                     <td>{{ $k->kode_rekening }}</td>
                                     <td>{{ $k->uraian }}</td>
-                                    <td> <button type="button" data-bs-toggle="modal"
+                                    <td>
+                                        <button type="button" data-bs-toggle="modal"
                                             data-bs-target="#inlineForm{{ $k->id }}"
-                                            class="btn btn-warning rounded-circle"><i class="fa fa-edit"></i></button><a
-                                            href="/hapus/{{ $k->id }}" class="btn btn-danger rounded-circle"><i
-                                                class="fa fa-trash"></i></a></td>
+                                            class="btn btn-warning rounded-circle"><i class="fa fa-edit"></i>
+                                        </button>
+                                        <form action="kodrek/hapus/{{ $k->id }}" method="POST" class="d-inline">
+                                            @method('delete') @csrf <button
+                                                type="submit"class="btn btn-danger rounded-circle"><i
+                                                    class="fa fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -69,7 +76,7 @@
                         <i data-feather="x"></i>
                     </button>
                 </div>
-                <form action="/tambah" method="post">
+                <form action="kodrek/tambah" method="post">
                     @csrf
                     <div class="modal-body">
                         <label>Kode Rekening</label>
@@ -106,17 +113,19 @@
                             <i data-feather="x"></i>
                         </button>
                     </div>
-                    <form action="#">
+                    <form action="kodrek/ubah/{{ $kk->id }}" method="post">
+                        @csrf
+                        @method('put')
                         <div class="modal-body">
                             <label>Kode Rekening</label>
                             <div class="form-group">
-                                <input type="text" placeholder="Kode Rekening" class="form-control"
+                                <input type="text" placeholder="Kode Rekening" class="form-control" name="kodrek"
                                     value="{{ $kk->kode_rekening }}">
                             </div>
                             <label>Uraian</label>
                             <div class="form-group">
                                 <input type="text" placeholder="Uraian" class="form-control"
-                                    value="{{ $kk->uraian }}">
+                                    value="{{ $kk->uraian }}" name="uraian">
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -124,7 +133,7 @@
                                 <i class="bx bx-x d-block d-sm-none"></i>
                                 <span class="d-none d-sm-block">Batal</span>
                             </button>
-                            <button type="button" class="btn btn-primary ml-1" data-bs-dismiss="modal">
+                            <button type="submit" class="btn btn-primary ml-1">
                                 <i class="bx bx-check d-block d-sm-none"></i>
                                 <span class="d-none d-sm-block">Simpan</span>
                             </button>

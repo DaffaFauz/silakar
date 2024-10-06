@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Kodrek;
 use App\Models\Anggaran;
 use App\Models\SubKodrek1;
 use App\Models\SubKodrek5;
@@ -13,12 +12,13 @@ use App\Http\Controllers\SubKodrek5Controller;
 Route::get('/', function () {
     return view('dashboard');
 });
-Route::get('/kodrek', function () {
-    return view('kodrek', ['kodrek' => Kodrek::get()]);
-});
-Route::delete('/kodrek/{id}', [KodrekController::class, 'destroy']);
 
-Route::post('/tambah', [KodrekController::class, 'store']);
+//Rute Kodrek
+Route::get('/kodrek', [KodrekController::class, 'index']);
+Route::post('/kodrek/tambah', [KodrekController::class, 'store']);
+Route::put('/kodrek/ubah/{id}', [KodrekController::class, 'update']);
+Route::delete('/kodrek/hapus/{id}', [KodrekController::class, 'destroy']);
+
 
 Route::get('/anggaran', function () {
     return view('anggaran', ['anggaran' => Anggaran::get()]);

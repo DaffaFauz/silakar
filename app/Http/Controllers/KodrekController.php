@@ -13,15 +13,9 @@ class KodrekController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return view('kodrek', [
+            'kodrek' => Kodrek::all(),
+        ]);
     }
 
     /**
@@ -47,28 +41,28 @@ class KodrekController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Kodrek $kodrek)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Kodrek $kodrek)
+    public function update(Request $request, $id)
     {
         //
+        $kodrek = Kodrek::find($id);
+        $kodrek->update([
+            'kode_rekening' => $request->kodrek,
+            'uraian' => $request->uraian,
+            ]);
+            return redirect()->to('/kodrek');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Kodrek $kodrek)
+    public function destroy($id)
     {
         //
-        Kodrek::find($kodrek)->delete();
+        $hapus = Kodrek::findorfail($id);
+        $hapus->delete();
+        
         return redirect()->to('/kodrek');
     }
 }
