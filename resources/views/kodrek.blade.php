@@ -49,10 +49,11 @@
                                             data-bs-target="#inlineForm{{ $k->id }}"
                                             class="btn btn-warning rounded-circle"><i class="fa fa-edit"></i>
                                         </button>
-                                        <form action="kodrek/hapus/{{ $k->id }}" method="POST" class="d-inline">
-                                            @method('delete') @csrf <button
-                                                type="submit"class="btn btn-danger rounded-circle"><i
-                                                    class="fa fa-trash"></i>
+                                        <form action="kodrek/hapus/{{ $k->id }}" method="POST"
+                                            class="d-inline hapus">
+                                            @method('delete') @csrf <button type="button"
+                                                onclick="hapus({{ $k->id }})"
+                                                class="btn btn-danger rounded-circle"><i class="fa fa-trash"></i>
                                             </button>
                                         </form>
                                     </td>
@@ -81,11 +82,24 @@
                     <div class="modal-body">
                         <label>Kode Rekening</label>
                         <div class="form-group">
-                            <input type="text" placeholder="Kode Rekening" class="form-control" name="kodrek">
+                            <input type="text" placeholder="Kode Rekening"
+                                class="form-control @error('kodrek') is-invalid @enderror " name="kodrek"
+                                value="{{ old('kodrek') }}" required>
+                            @error('kodrek')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
                         <label>Uraian</label>
                         <div class="form-group">
-                            <input type="text" placeholder="Uraian" class="form-control" name="uraian">
+                            <input type="text" placeholder="Uraian" class="form-control @error('uraian') @enderror"
+                                name="uraian" required value="{{ old('uraian') }}">
+                            @error('uraian')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -119,13 +133,13 @@
                         <div class="modal-body">
                             <label>Kode Rekening</label>
                             <div class="form-group">
-                                <input type="text" placeholder="Kode Rekening" class="form-control" name="kodrek"
-                                    value="{{ $kk->kode_rekening }}">
+                                <input type="text" placeholder="Kode Rekening" class="form-control"
+                                    name="kodrek" value="{{ $kk->kode_rekening }}" required>
                             </div>
                             <label>Uraian</label>
                             <div class="form-group">
                                 <input type="text" placeholder="Uraian" class="form-control"
-                                    value="{{ $kk->uraian }}" name="uraian">
+                                    value="{{ $kk->uraian }}" name="uraian" required>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -152,6 +166,34 @@
             // Simple Datatable
             let table1 = document.querySelector('#table1');
             let dataTable = new simpleDatatables.DataTable(table1);
+        </script>
+        <script>
+            @if ($errors->any())
+                $(document).ready(function() {
+                    $('#inlineForm').modal('show');
+                });
+            @endif
+        </script>
+        <script>
+            function hapus(id) {
+                Swal.fire({
+                    title: "Apakah Anda yakin?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: "Data berhasil dihapus!",
+                            icon: "success"
+                        });
+                        $('.hapus').submit()
+                    }
+                });
+            }
         </script>
     @endpush
 </x-layout>

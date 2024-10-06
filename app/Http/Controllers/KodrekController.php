@@ -24,6 +24,17 @@ class KodrekController extends Controller
     public function store(Request $request): RedirectResponse
     {
         //
+        $request->validate([
+            'kodrek' => 'required|numeric|unique:kodreks|digits:1',
+            'uraian' => 'required'
+        ],
+        [
+            'required' => 'Kolom harus diisi!',
+            'numeric' => 'Nilai yang diisi harus berupa angka!',
+            'unique' => 'Kode rekening sudah ada!',
+            'digits' => 'Kode rekening hanya boleh 1 digit!']);
+
+
         $kodrek = Kodrek::create([
             'kode_rekening' => $request->kodrek,
             'uraian' => $request->uraian
@@ -46,6 +57,16 @@ class KodrekController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $request->validate([
+            'kodrek' => 'required|numeric|unique:kodreks|digits:1',
+            'uraian' => 'required'
+        ],
+        [
+            'required' => 'Kolom harus diisi!',
+            'numeric' => 'Nilai yang diisi harus berupa angka!',
+            'unique' => 'Kode rekening sudah ada!',
+            'digits' => 'Kode rekening hanya boleh 1 digit!']);
+            
         $kodrek = Kodrek::find($id);
         $kodrek->update([
             'kode_rekening' => $request->kodrek,
