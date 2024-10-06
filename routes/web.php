@@ -1,0 +1,42 @@
+<?php
+
+use App\Models\Kodrek;
+use App\Models\Anggaran;
+use App\Models\SubKodrek1;
+use App\Models\SubKodrek5;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\KodrekController;
+use App\Http\Controllers\AnggaranController;
+use App\Http\Controllers\SubKodrek1Controller;
+use App\Http\Controllers\SubKodrek5Controller;
+
+Route::get('/', function () {
+    return view('dashboard');
+});
+Route::get('/kodrek', function () {
+    return view('kodrek', ['kodrek' => Kodrek::get()]);
+});
+Route::delete('/kodrek/{id}', [KodrekController::class, 'destroy']);
+
+Route::post('/tambah', [KodrekController::class, 'store']);
+
+Route::get('/anggaran', function () {
+    return view('anggaran', ['anggaran' => Anggaran::get()]);
+});
+Route::get('/laporan', function () {
+    return view('laporan');
+});
+
+
+Route::get('/subkodrek5', function () {
+    return view('subkodrek5', ['kodrek' => SubKodrek5::get()]);
+});
+// Route::get('/subkodrek1', function () {
+//     return view('subkodrek1', ['kodrek' => SubKodrek1::get(), 'kodrek1' => Kodrek::all()]);
+// });
+
+Route::get('subkodrek1', [SubKodrek1Controller::class, 'index']);
+
+Route::post('/tambahsubkodrek1', [SubKodrek1Controller::class, 'store']);
+Route::post('/tambahsubkodrek5', [SubKodrek5Controller::class, 'store']);
+Route::post('/tambahanggaran', [AnggaranController::class, 'store']);
