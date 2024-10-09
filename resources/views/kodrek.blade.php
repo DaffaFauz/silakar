@@ -5,6 +5,15 @@
 
     <div class="page-heading">
         <div class="page-title">
+            @if (session()->has('success'))
+                <div class="alert alert-success col-4" role="alert">
+                    {{ session('success') }}
+                </div>
+            @elseif (session()->has('failed'))
+                <div class="alert alert-danger col-4" role="alert">
+                    {{ session('failed') }}
+                </div>
+            @endif
             <div class="row">
                 <div class="col-12 col-md-6 order-md-1 order-last">
                     <h3>DataTable</h3>
@@ -133,13 +142,25 @@
                         <div class="modal-body">
                             <label>Kode Rekening</label>
                             <div class="form-group">
-                                <input type="text" placeholder="Kode Rekening" class="form-control"
-                                    name="kodrek" value="{{ $kk->kode_rekening }}" required>
+                                <input type="text" placeholder="Kode Rekening"
+                                    class="form-control @error('kodrek') @enderror" name="kodrek"
+                                    value="{{ $kk->kode_rekening }}" required>
+                                @error('uraian')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
                             </div>
                             <label>Uraian</label>
                             <div class="form-group">
-                                <input type="text" placeholder="Uraian" class="form-control"
-                                    value="{{ $kk->uraian }}" name="uraian" required>
+                                <input type="text" placeholder="Uraian"
+                                    class="form-control @error('uraian') @enderror" value="{{ $kk->uraian }}"
+                                    name="uraian" required>
+                                @error('uraian')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -168,27 +189,21 @@
             let dataTable = new simpleDatatables.DataTable(table1);
         </script>
         <script>
-            @if ($errors->any())
-                $(document).ready(function() {
-                    $('#inlineForm').modal('show');
-                });
-            @endif
-        </script>
-        <script>
             function hapus(id) {
                 Swal.fire({
                     title: "Apakah Anda yakin?",
-                    text: "You won't be able to revert this!",
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#3085d6",
                     cancelButtonColor: "#d33",
-                    confirmButtonText: "Yes, delete it!"
+                    confirmButtonText: "Ya, hapus!",
+                    cancelButtonText: "Batal",
                 }).then((result) => {
                     if (result.isConfirmed) {
                         Swal.fire({
                             title: "Data berhasil dihapus!",
-                            icon: "success"
+                            icon: "success",
+                            showConfirmButton: false,
                         });
                         $('.hapus').submit()
                     }

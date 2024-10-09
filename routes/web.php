@@ -19,6 +19,12 @@ Route::post('/kodrek/tambah', [KodrekController::class, 'store']);
 Route::put('/kodrek/ubah/{id}', [KodrekController::class, 'update']);
 Route::delete('/kodrek/hapus/{id}', [KodrekController::class, 'destroy']);
 
+//Rute Subkodrek 1
+Route::get('subkodrek1', [SubKodrek1Controller::class, 'index']);
+Route::post('/subkodrek1/tambah', [SubKodrek1Controller::class, 'store']);
+Route::put('/subkodrek1/ubah/{id}', [SubKodrek1Controller::class, 'update']);
+Route::delete('/subkodrek1/hapus/{id}', [SubKodrek1Controller::class, 'destroy']);
+
 
 Route::get('/anggaran', function () {
     return view('anggaran', ['anggaran' => Anggaran::get()]);
@@ -35,8 +41,6 @@ Route::get('/subkodrek5', function () {
 //     return view('subkodrek1', ['kodrek' => SubKodrek1::get(), 'kodrek1' => Kodrek::all()]);
 // });
 
-Route::get('subkodrek1', [SubKodrek1Controller::class, 'index']);
 
-Route::post('/tambahsubkodrek1', [SubKodrek1Controller::class, 'store']);
 Route::post('/tambahsubkodrek5', [SubKodrek5Controller::class, 'store']);
 Route::post('/tambahanggaran', [AnggaranController::class, 'store']);

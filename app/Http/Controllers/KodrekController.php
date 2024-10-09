@@ -40,7 +40,13 @@ class KodrekController extends Controller
             'uraian' => $request->uraian
         ]);
         $kodrek->save();
-        return redirect()->to('/kodrek');
+        // return redirect()->to('/kodrek');
+        if($kodrek){
+            return redirect('/kodrek')->with('success', 'Kode Rekening berhasil ditambahkan!');
+        }else {
+            return redirect('/kodrek')->with('failed', 'Kode Rekening gagal ditambahkan!');
+
+        }
     }
 
     /**
@@ -72,7 +78,12 @@ class KodrekController extends Controller
             'kode_rekening' => $request->kodrek,
             'uraian' => $request->uraian,
             ]);
-            return redirect()->to('/kodrek');
+            // return redirect()->to('/kodrek');
+            if($kodrek){
+                return redirect('/kodrek')->with('success', 'Kode Rekening berhasil diubah!');
+            }else{
+                return redirect('/kodrek')->with('failed', 'Kode Rekening gagal diubah!');
+            }
     }
 
     /**
@@ -83,7 +94,12 @@ class KodrekController extends Controller
         //
         $hapus = Kodrek::findorfail($id);
         $hapus->delete();
-        
-        return redirect()->to('/kodrek');
+
+        // return redirect('/kodrek')->with('/kodrek');
+        if(!$hapus){
+            return redirect('/kodrek')->with('failed', 'Kode Rekening gagal dihapus!');
+        }else{
+            return redirect('/kodrek')->with('/kodrek');
+        }
     }
 }

@@ -69,7 +69,7 @@
                         <i data-feather="x"></i>
                     </button>
                 </div>
-                <form action="/tambahsubkodrek1" method="post">
+                <form action="/subkodrek1/tambah" method="post">
                     @csrf
                     <div class="modal-body">
                         <label>Kode Rekening</label>
@@ -103,7 +103,7 @@
             </div>
         </div>
     </div>
-    @foreach ($kodrek as $kk)
+    @foreach ($subkodrek1 as $kk)
         <div class="modal fade text-left" id="inlineForm{{ $kk->id }}" tabindex="-1" role="dialog"
             aria-labelledby="myModalLabel33" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
@@ -114,17 +114,33 @@
                             <i data-feather="x"></i>
                         </button>
                     </div>
-                    <form action="#">
+                    <form action="/subkodrek1/ubah/{{ $kk->id }}" method="post">
+                        @csrf
+                        @method('put')
                         <div class="modal-body">
                             <label>Kode Rekening</label>
                             <div class="form-group">
-                                <input type="text" placeholder="Kode Rekening" class="form-control"
-                                    value="{{ $kk->kode_rekening }}">
+                                <input type="text" placeholder="Kode Rekening"
+                                    class="form-control @error('kodrek1') @enderror" name="kodrek1"
+                                    value="{{ $kk->kode_rekening1 }}">
                             </div>
                             <label>Uraian</label>
                             <div class="form-group">
-                                <input type="text" placeholder="Uraian" class="form-control"
-                                    value="{{ $kk->uraian }}">
+                                <input type="text" placeholder="Uraian"
+                                    class="form-control @error('uraian') @enderror" value="{{ $kk->uraian }}"
+                                    name="uraian">
+                            </div>
+                            <label>Induk Kode Rekening</label>
+                            <div class="form-group">
+                                <select name="kodrek" id=""
+                                    class="form-control @error('kodrek') @enderror">
+                                    @foreach ($kodrek as $k)
+                                        @if (old('kodrek') == $k->id)
+                                            <option value="{{ $k->id }}" selected>{{ $k->uraian }}</option>
+                                        @endif
+                                        <option value="{{ $k->id }}">{{ $k->uraian }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -132,7 +148,7 @@
                                 <i class="bx bx-x d-block d-sm-none"></i>
                                 <span class="d-none d-sm-block">Batal</span>
                             </button>
-                            <button type="button" class="btn btn-primary ml-1" data-bs-dismiss="modal">
+                            <button type="submit" class="btn btn-primary ml-1">
                                 <i class="bx bx-check d-block d-sm-none"></i>
                                 <span class="d-none d-sm-block">Simpan</span>
                             </button>

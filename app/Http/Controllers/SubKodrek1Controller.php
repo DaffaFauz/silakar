@@ -33,6 +33,17 @@ class SubKodrek1Controller extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'kode_rekening1' => 'required|numeric|unique:sub_kodrek1s|digits:1',
+            'uraian' => 'required'
+        ],
+        [
+            'required' => 'Kolom harus diisi!',
+            'numeric' => 'Nilai yang diisi harus berupa angka!',
+            'unique' => 'Kode rekening sudah ada!',
+            'digits' => 'Kode rekening hanya boleh 1 digit!'
+        ]);
+
         $subkodrek1 = join(".", array(Kodrek::find($request->kodrek)->kode_rekening, $request->kodrek1));
         // dd($subKodrek1);
         $kodrek = SubKodrek1::create([
@@ -42,7 +53,9 @@ class SubKodrek1Controller extends Controller
 
         ]);
         $kodrek->save();
-        return redirect()->to('/subkodrek1');
+        if($kodrek){
+            return redirect('/subkodrek1')->with('success', 'Sub Kode Rekening berhasil ditambahkan!');
+        }
     }
 
     /**
@@ -64,9 +77,35 @@ class SubKodrek1Controller extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, SubKodrek1 $subKodrek1)
+    public function update(Request $request, $id)
     {
         //
+        $request->validate([
+            'kodrek1' => 'required|numeric|unique:sub_kodrek1s|digits:1',
+            'uraian' => 'required',
+            'kodrek' => 'required|numeric||digits:1',
+        ],
+        [
+            'required' => 'Kolom harus diisi!',
+            'numeric' => 'Nilai yang diisi harus berupa angka!',
+            'unique' => 'Kode rekening sudah ada!',
+            'digits' => 'Kode rekening hanya boleh 1 digit!'
+        ]);
+
+        $kodrek = SubKodrek1::find($id);
+
+        $subkodrek1 = join(".", array(Kodrek::find($request->kodrek)->kode_rekening, $request->kodrek1));
+        $kodrek->update([
+            'kode_rekening1' => $subkodrek1,
+            'uraian' => $request->uraian,
+            'kode_rekening' => $request->kodrek,
+
+        ]);
+
+
+        if($kodrek){
+            return redirect('/subkodrek1')->with('success', 'Sub Kode Rekening berhasil diubah!');
+        }
     }
 
     /**
