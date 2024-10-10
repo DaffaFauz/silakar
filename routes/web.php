@@ -15,7 +15,7 @@ Route::get('/', function () {
 
 //Rute Kodrek
 Route::get('/kodrek', [KodrekController::class, 'index']);
-Route::post('/kodrek/tambah', [KodrekController::class, 'store']);
+Route::post('/kodrek/tambah', [KodrekController::class, 'store'])->name('kodrek.tambah');
 Route::put('/kodrek/ubah/{id}', [KodrekController::class, 'update']);
 Route::delete('/kodrek/hapus/{id}', [KodrekController::class, 'destroy']);
 

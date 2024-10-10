@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Kodrek;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use mysql_xdevapi\Exception;
 
 class KodrekController extends Controller
 {
@@ -21,31 +24,39 @@ class KodrekController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
-        //
-        $request->validate([
-            'kodrek' => 'required|numeric|unique:kodreks|digits:1',
-            'uraian' => 'required'
-        ],
-        [
-            'required' => 'Kolom harus diisi!',
-            'numeric' => 'Nilai yang diisi harus berupa angka!',
-            'unique' => 'Kode rekening sudah ada!',
-            'digits' => 'Kode rekening hanya boleh 1 digit!']);
+        try {
+            $rules = [
+                'kode_rekening' => 'required|numeric|unique:kodreks|digits:1',
+                'uraian' => 'required'
+            ];
 
+            $customMessages = [
+                'kode_rekening.required' => 'Kolom harus diisi!',
+                'kode_rekening.numeric' => 'Nilai yang diisi harus berupa angka!',
+                'kode_rekening.unique' => 'Kode rekening sudah ada!',
+                'kode_rekening.digits' => 'Kode rekening hanya boleh 1 digit!',
+                'uraian.required' => 'Kode rekening hanya boleh 1 digit!'
+            ];
+            $validator = Validator::make(
+                $request->all(),
+                $rules,
+                $customMessages
+            );
 
-        $kodrek = Kodrek::create([
-            'kode_rekening' => $request->kodrek,
-            'uraian' => $request->uraian
-        ]);
-        $kodrek->save();
-        // return redirect()->to('/kodrek');
-        if($kodrek){
+            if ($validator->fails()) {
+                return redirect('/kodrek')->withErrors($validator->errors());
+            }
+            DB::transaction(function () use ($request) {
+                Kodrek::create([
+                    'kode_rekening' => $request->kode_rekening,
+                    'uraian' => $request->uraian
+                ]);
+            });
             return redirect('/kodrek')->with('success', 'Kode Rekening berhasil ditambahkan!');
-        }else {
-            return redirect('/kodrek')->with('failed', 'Kode Rekening gagal ditambahkan!');
-
+        } catch (\Exception $exception) {
+            return redirect('/kodrek')->with('failed', $exception->getMessage());
         }
     }
 
@@ -67,23 +78,23 @@ class KodrekController extends Controller
             'kodrek' => 'required|numeric|unique:kodreks|digits:1',
             'uraian' => 'required'
         ],
-        [
-            'required' => 'Kolom harus diisi!',
-            'numeric' => 'Nilai yang diisi harus berupa angka!',
-            'unique' => 'Kode rekening sudah ada!',
-            'digits' => 'Kode rekening hanya boleh 1 digit!']);
-            
+            [
+                'required' => 'Kolom harus diisi!',
+                'numeric' => 'Nilai yang diisi harus berupa angka!',
+                'unique' => 'Kode rekening sudah ada!',
+                'digits' => 'Kode rekening hanya boleh 1 digit!']);
+
         $kodrek = Kodrek::find($id);
         $kodrek->update([
             'kode_rekening' => $request->kodrek,
             'uraian' => $request->uraian,
-            ]);
-            // return redirect()->to('/kodrek');
-            if($kodrek){
-                return redirect('/kodrek')->with('success', 'Kode Rekening berhasil diubah!');
-            }else{
-                return redirect('/kodrek')->with('failed', 'Kode Rekening gagal diubah!');
-            }
+        ]);
+        // return redirect()->to('/kodrek');
+        if ($kodrek) {
+            return redirect('/kodrek')->with('success', 'Kode Rekening berhasil diubah!');
+        } else {
+            return redirect('/kodrek')->with('failed', 'Kode Rekening gagal diubah!');
+        }
     }
 
     /**
@@ -96,9 +107,9 @@ class KodrekController extends Controller
         $hapus->delete();
 
         // return redirect('/kodrek')->with('/kodrek');
-        if(!$hapus){
+        if (!$hapus) {
             return redirect('/kodrek')->with('failed', 'Kode Rekening gagal dihapus!');
-        }else{
+        } else {
             return redirect('/kodrek')->with('/kodrek');
         }
     }

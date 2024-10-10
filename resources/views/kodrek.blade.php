@@ -9,10 +9,12 @@
                 <div class="alert alert-success col-4" role="alert">
                     {{ session('success') }}
                 </div>
-            @elseif (session()->has('failed'))
-                <div class="alert alert-danger col-4" role="alert">
-                    {{ session('failed') }}
-                </div>
+            @elseif ($errors)
+                @foreach($errors->all() as $error)
+                    <div class="alert alert-danger col-4" role="alert">
+                        {{ $error }}
+                    </div>
+                @endforeach
             @endif
             <div class="row">
                 <div class="col-12 col-md-6 order-md-1 order-last">
@@ -34,40 +36,42 @@
                 <div class="card-header d-flex justify-content-between">
                     Data Kode Rekening
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                        data-bs-target="#inlineForm"><i class="fa fa-plus"></i> Tambah Data</button>
+                            data-bs-target="#inlineForm"><i class="fa fa-plus"></i> Tambah Data
+                    </button>
                 </div>
                 <div class="card-body">
                     <table class="table table-striped" id="table1">
                         <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Kode Rekening</th>
-                                <th>Uraian</th>
-                                <th>Aksi</th>
-                            </tr>
+                        <tr>
+                            <th>No</th>
+                            <th>Kode Rekening</th>
+                            <th>Uraian</th>
+                            <th>Aksi</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            <?php $no = 1; ?>
-                            @foreach ($kodrek as $k)
-                                <tr>
-                                    <td>{{ $no++ }}</td>
-                                    <td>{{ $k->kode_rekening }}</td>
-                                    <td>{{ $k->uraian }}</td>
-                                    <td>
-                                        <button type="button" data-bs-toggle="modal"
+                        <?php $no = 1; ?>
+                        @foreach ($kodrek as $k)
+                            <tr>
+                                <td>{{ $no++ }}</td>
+                                <td>{{ $k->kode_rekening }}</td>
+                                <td>{{ $k->uraian }}</td>
+                                <td>
+                                    <button type="button" data-bs-toggle="modal"
                                             data-bs-target="#inlineForm{{ $k->id }}"
                                             class="btn btn-warning rounded-circle"><i class="fa fa-edit"></i>
-                                        </button>
-                                        <form action="kodrek/hapus/{{ $k->id }}" method="POST"
-                                            class="d-inline hapus">
-                                            @method('delete') @csrf <button type="button"
+                                    </button>
+                                    <form action="kodrek/hapus/{{ $k->id }}" method="POST"
+                                          class="d-inline hapus">
+                                        @method('delete') @csrf
+                                        <button type="button"
                                                 onclick="hapus({{ $k->id }})"
                                                 class="btn btn-danger rounded-circle"><i class="fa fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -77,7 +81,7 @@
     </div>
 
     <div class="modal fade text-left" id="inlineForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33"
-        aria-hidden="true">
+         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -86,28 +90,28 @@
                         <i data-feather="x"></i>
                     </button>
                 </div>
-                <form action="kodrek/tambah" method="post">
+                <form action="{{ route('kodrek.tambah') }}" method="post">
                     @csrf
                     <div class="modal-body">
                         <label>Kode Rekening</label>
                         <div class="form-group">
                             <input type="text" placeholder="Kode Rekening"
-                                class="form-control @error('kodrek') is-invalid @enderror " name="kodrek"
-                                value="{{ old('kodrek') }}" required>
+                                   class="form-control @error('kodrek') is-invalid @enderror " name="kode_rekening"
+                                   value="{{ old('kodrek') }}" required>
                             @error('kodrek')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
                             @enderror
                         </div>
                         <label>Uraian</label>
                         <div class="form-group">
                             <input type="text" placeholder="Uraian" class="form-control @error('uraian') @enderror"
-                                name="uraian" required value="{{ old('uraian') }}">
+                                   name="uraian" required value="{{ old('uraian') }}">
                             @error('uraian')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
                             @enderror
                         </div>
                     </div>
@@ -127,7 +131,7 @@
     </div>
     @foreach ($kodrek as $kk)
         <div class="modal fade text-left" id="inlineForm{{ $kk->id }}" tabindex="-1" role="dialog"
-            aria-labelledby="myModalLabel33" aria-hidden="true">
+             aria-labelledby="myModalLabel33" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -143,23 +147,23 @@
                             <label>Kode Rekening</label>
                             <div class="form-group">
                                 <input type="text" placeholder="Kode Rekening"
-                                    class="form-control @error('kodrek') @enderror" name="kodrek"
-                                    value="{{ $kk->kode_rekening }}" required>
+                                       class="form-control @error('kodrek') @enderror" name="kodrek"
+                                       value="{{ $kk->kode_rekening }}" required>
                                 @error('uraian')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
                                 @enderror
                             </div>
                             <label>Uraian</label>
                             <div class="form-group">
                                 <input type="text" placeholder="Uraian"
-                                    class="form-control @error('uraian') @enderror" value="{{ $kk->uraian }}"
-                                    name="uraian" required>
+                                       class="form-control @error('uraian') @enderror" value="{{ $kk->uraian }}"
+                                       name="uraian" required>
                                 @error('uraian')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
                                 @enderror
                             </div>
                         </div>
