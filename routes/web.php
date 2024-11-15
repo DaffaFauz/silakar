@@ -3,7 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\AnggaranController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\RealisasiController;
 use App\Http\Controllers\KodeRekeningController;
 
 // Rute Login
