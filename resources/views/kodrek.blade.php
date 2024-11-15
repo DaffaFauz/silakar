@@ -219,57 +219,6 @@
             </div>
         </div>
     @endforeach
-    @foreach ($kodeRekenings as $kk)
-        <div class="modal fade text-left" id="inlineFormadd{{ $kk->id }}" tabindex="-1" role="dialog"
-            aria-labelledby="myModalLabel33" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="myModalLabel33">Tambah Data Sub Kode Rekening</h4>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                            <i data-feather="x"></i>
-                        </button>
-                    </div>
-                    <form action="/kodrek/tambahsub/{{ $kk->id }}" method="post">
-                        @csrf
-                        <div class="modal-body">
-                            <label>Sub Kode Rekening</label>
-                            <div class="form-group">
-                                <input type="text" placeholder="Kode Rekening"
-                                    class="form-control @error('kode_rekening') @enderror" name="kode_rekening"
-                                    required>
-                                @error('kode_rekening')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                            <label>Uraian</label>
-                            <div class="form-group">
-                                <input type="text" placeholder="Uraian"
-                                    class="form-control @error('uraian') @enderror" name="uraian" required>
-                                @error('uraian')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
-                                <i class="bx bx-x d-block d-sm-none"></i>
-                                <span class="d-none d-sm-block">Batal</span>
-                            </button>
-                            <button type="submit" class="btn btn-primary ml-1">
-                                <i class="bx bx-check d-block d-sm-none"></i>
-                                <span class="d-none d-sm-block">Simpan</span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    @endforeach
 
 
 

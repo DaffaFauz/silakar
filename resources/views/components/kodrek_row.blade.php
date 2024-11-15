@@ -1,5 +1,5 @@
 <tr>
-    <td>{{ $no }}</td>
+    <td>{{ $no++ }}</td>
     <td>
         {{ $kodeRekening->kode_rekening }}
     </td>
