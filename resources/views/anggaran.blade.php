@@ -8,6 +8,11 @@
             <div class="row">
                 <div class="col-12 col-md-6 order-md-1 order-last">
                     <h3>Anggaran</h3>
+                    @if (session()->has('success'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('success') }}
+                        </div>
+                    @endif
                 </div>
                 <div class="col-12 col-md-6 order-md-2 order-first">
                     <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
@@ -51,47 +56,22 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>5</td>
-                                <td>Belanja Daerah</td>
-                                <td>Rp. 2.500.000.000</td>
-                                <td><button type="button" data-bs-toggle="modal" data-bs-target="#inlineForm"
-                                        class="btn btn-warning rounded-circle"><i class="fa fa-edit"></i></button></td>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>5.1</td>
-                                <td>Belanja Operasi</td>
-                                <td>Rp. 500.000.000</td>
-                                <td><button type="button" data-bs-toggle="modal" data-bs-target="#inlineForm"
-                                        class="btn btn-warning rounded-circle"><i class="fa fa-edit"></i></button></td>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>5.1.03</td>
-                                <td>Belanja Pegawai</td>
-                                <td>Rp. 75.000.000</td>
-                                <td><button type="button" data-bs-toggle="modal" data-bs-target="#inlineForm"
-                                        class="btn btn-warning rounded-circle"><i class="fa fa-edit"></i></button></td>
-                                </td>
-                            </tr>
-                            {{-- <?php $no = 1; ?>
-                            @foreach ($anggaran as $a)
+                            @foreach ($anggarans as $anggaran)
                                 <tr>
-                                    <td>{{ $no++ }}</td>
-                                    <td>2024</td>
-                                    <td>{{ $a->kodrek5->uraian }}</td>
-                                    <td>{{ $a->nominal }}</td>
-                                    <td> <button type="button" data-bs-toggle="modal"
-                                            data-bs-target="#inlineForm{{ $a->id }}"
-                                            class="btn btn-warning rounded-circle"><i class="fa fa-edit"></i></button><a
-                                            href="" class="btn btn-danger rounded-circle"><i
-                                                class="fa fa-trash"></i></a></td>
-                                </tr> --}}
-                            {{-- @endforeach --}}
+                                    <td>{{ $anggaran->kodeRekening->kode_rekening }}</td>
+                                    <td>{{ $anggaran->tahun }}</td>
+                                    <td>{{ $anggaran->nominal }}</td>
+                                    <td>
+                                        <form action="{{ route('anggaran.update', $anggaran->id) }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="number" name="nilai" value="{{ $anggaran->nilai }}"
+                                                step="0.01">
+                                            <button type="submit">Ubah</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -99,7 +79,7 @@
 
         </section>
     </div>
-    {{-- <div class="modal fade text-left" id="inlineForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33"
+    <div class="modal fade text-left" id="inlineForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
             <div class="modal-content">
@@ -109,39 +89,12 @@
                         <i data-feather="x"></i>
                     </button>
                 </div>
-                <form action="/tambahanggaran" method="post">
+                <form action="/anggaran/generate" method="post">
                     @csrf
                     <div class="modal-body">
-                        <label>Nominal</label>
+                        <label>Tahun</label>
                         <div class="form-group">
-                            <input type="text" placeholder="Nominal Anggaran" class="form-control" name="nominal">
-                        </div>
-                        <label>Bulan &amp; Tahun</label>
-                        <div class="form-group">
-                            <input type="month" placeholder="Kode Rekening" class="form-control" name="bulan">
-                        </div>
-                        <label>Kode Rekening</label>
-                        <div class="form-group">
-                            <select name="kodrek" id=""
-                                class="form-control @error('kodrek') is-invalid @enderror" required>
-                                <option value="" selected disabled>-- Kode Rekening --</option>
-                                @foreach ($kodrek as $k)
-                                    <option value="{{ $k->id }}">{{ $k->uraian }}</option>
-                                @endforeach
-                            </select>
-                            @error('kodrek')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-                        <label>Realisasi GU</label>
-                        <div class="form-group">
-                            <input type="text" placeholder="GU" class="form-control" name="gu">
-                        </div>
-                        <label>Realisasi LS</label>
-                        <div class="form-group">
-                            <input type="text" placeholder="LS" class="form-control" name="ls">
+                            <input type="number" placeholder="YYYY" class="form-control" name="tahun" min="2000">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -151,15 +104,15 @@
                         </button>
                         <button type="submit" class="btn btn-primary ml-1">
                             <i class="bx bx-check d-block d-sm-none"></i>
-                            <span class="d-none d-sm-block">Tambah</span>
+                            <span class="d-none d-sm-block">Generate</span>
                         </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    <div class="modal fade text-left" id="inlineForm1" tabindex="-1" role="dialog"
-        aria-labelledby="myModalLabel33" aria-hidden="true">
+    {{-- <div class="modal fade text-left" id="inlineForm1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">

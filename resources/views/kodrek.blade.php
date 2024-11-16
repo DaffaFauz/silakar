@@ -36,28 +36,27 @@
                 <div class="card-header d-flex justify-content-between">
                     Data Kode Rekening
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                            data-bs-target="#inlineForm"><i class="fa fa-plus"></i> Tambah Data
+                        data-bs-target="#inlineForm"><i class="fa fa-plus"></i> Tambah Data
                     </button>
                 </div>
                 <div class="card-body">
                     <table class="table table-striped" id="table1">
                         <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Kode Rekening</th>
-                            <th>Uraian</th>
-                            <th>Aksi</th>
-                        </tr>
+                            <tr>
+                                <th>No</th>
+                                <th>Kode Rekening</th>
+                                <th>Uraian</th>
+                                <th>Aksi</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        <?php $no = 1; ?>
-                        @foreach ($kodeRekenings as $k)
-                            @include('components.kodrek_row', [
-                                'kodeRekening' => $k,
-                                'no' => $no,
-                            ])
-                                <?php $no++; ?>
-                        @endforeach
+                            <?php $no = [1]; ?>
+                            @foreach ($kodeRekenings as $k)
+                                @include('components.kodrek_row', [
+                                    'kodeRekening' => $k,
+                                    'no' => $no,
+                                ])
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -67,7 +66,7 @@
     </div>
 
     <div class="modal fade text-left" id="inlineForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33"
-         aria-hidden="true">
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -82,23 +81,22 @@
                         <label>Kode Rekening</label>
                         <div class="form-group">
                             <input type="text" placeholder="Kode Rekening"
-                                   class="form-control @error('kode_rekening') is-invalid @enderror "
-                                   name="kode_rekening"
-                                   value="{{ old('kodrek') }}" required>
+                                class="form-control @error('kode_rekening') is-invalid @enderror " name="kode_rekening"
+                                value="{{ old('kodrek') }}" required>
                             @error('kode_rekening')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
                             @enderror
                         </div>
                         <label>Uraian</label>
                         <div class="form-group">
                             <input type="text" placeholder="Uraian" class="form-control @error('uraian') @enderror"
-                                   name="uraian" required value="{{ old('uraian') }}">
+                                name="uraian" required value="{{ old('uraian') }}">
                             @error('uraian')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
                             @enderror
                         </div>
                     </div>
@@ -116,110 +114,107 @@
             </div>
         </div>
     </div>
-    @foreach ($kodeRekenings as $kk)
-        <div class="modal fade text-left" id="inlineForm{{ $kk->id }}" tabindex="-1" role="dialog"
-             aria-labelledby="myModalLabel33" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="myModalLabel33">Ubah Data Kode Rekening</h4>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                            <i data-feather="x"></i>
+    {{-- @foreach ($kodeRekenings as $kk) --}}
+    <div class="modal fade text-left" id="inlineFormedit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel33">Ubah Data Kode Rekening</h4>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <i data-feather="x"></i>
+                    </button>
+                </div>
+                <form id="formUbahKodeRekening" method="post">
+                    @csrf
+                    @method('put')
+                    <div class="modal-body">
+                        <label>Kode Rekening</label>
+                        <div class="form-group">
+                            <input type="text" placeholder="Kode Rekening" id="editKodeRekening"
+                                class="form-control @error('kode_rekening') @enderror" name="kode_rekening" required>
+                            @error('kode_rekening')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <label>Uraian</label>
+                        <div class="form-group">
+                            <input type="text" placeholder="Uraian" id="editUraian"
+                                class="form-control @error('uraian') @enderror" name="uraian" required>
+                            @error('uraian')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+                            <i class="bx bx-x d-block d-sm-none"></i>
+                            <span class="d-none d-sm-block">Batal</span>
+                        </button>
+                        <button type="submit" class="btn btn-primary ml-1">
+                            <i class="bx bx-check d-block d-sm-none"></i>
+                            <span class="d-none d-sm-block">Simpan</span>
                         </button>
                     </div>
-                    <form action="kodrek/ubah/{{ $kk->id }}" method="post">
-                        @csrf
-                        @method('put')
-                        <div class="modal-body">
-                            <label>Kode Rekening</label>
-                            <div class="form-group">
-                                <input type="text" placeholder="Kode Rekening"
-                                       class="form-control @error('kodrek') @enderror" name="kodrek"
-                                       value="{{ $kk->kode_rekening }}" required>
-                                @error('uraian')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-                            <label>Uraian</label>
-                            <div class="form-group">
-                                <input type="text" placeholder="Uraian"
-                                       class="form-control @error('uraian') @enderror" value="{{ $kk->uraian }}"
-                                       name="uraian" required>
-                                @error('uraian')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
-                                <i class="bx bx-x d-block d-sm-none"></i>
-                                <span class="d-none d-sm-block">Batal</span>
-                            </button>
-                            <button type="submit" class="btn btn-primary ml-1">
-                                <i class="bx bx-check d-block d-sm-none"></i>
-                                <span class="d-none d-sm-block">Simpan</span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                </form>
             </div>
         </div>
-    @endforeach
-    @foreach ($kodeRekenings as $kk)
-        <div class="modal fade text-left" id="inlineFormadd" tabindex="-1" role="dialog"
-             aria-labelledby="myModalLabel33" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="myModalLabel33">Tambah Data Sub Kode Rekening</h4>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                            <i data-feather="x"></i>
+    </div>
+
+
+    <div class="modal fade text-left" id="inlineFormadd" tabindex="-1" role="dialog"
+        aria-labelledby="myModalLabel33" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel33">Tambah Data Sub Kode Rekening</h4>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <i data-feather="x"></i>
+                    </button>
+                </div>
+                <form id="formTambahSub" action="" method="post">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" name="parent_id" value="">
+                        <label>Sub Kode Rekening</label>
+                        <div class="form-group">
+                            <input type="text" placeholder="Kode Rekening"
+                                class="form-control @error('kode_rekening') @enderror" name="kode_rekening" required>
+                            @error('kode_rekening')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <label>Uraian</label>
+                        <div class="form-group">
+                            <input type="text" placeholder="Uraian"
+                                class="form-control @error('uraian') @enderror" name="uraian" required>
+                            @error('uraian')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+                            <i class="bx bx-x d-block d-sm-none"></i>
+                            <span class="d-none d-sm-block">Batal</span>
+                        </button>
+                        <button type="submit" class="btn btn-primary ml-1">
+                            <i class="bx bx-check d-block d-sm-none"></i>
+                            <span class="d-none d-sm-block">Simpan</span>
                         </button>
                     </div>
-                    <form action="/kodrek/tambahsub/{{ $kk->id }}" method="post">
-                        @csrf
-                        <div class="modal-body">
-                            <label>Sub Kode Rekening</label>
-                            <div class="form-group">
-                                <input type="text" placeholder="Kode Rekening"
-                                       class="form-control @error('kode_rekening') @enderror" name="kode_rekening"
-                                       required>
-                                @error('kode_rekening')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-                            <label>Uraian</label>
-                            <div class="form-group">
-                                <input type="text" placeholder="Uraian"
-                                       class="form-control @error('uraian') @enderror" name="uraian" required>
-                                @error('uraian')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
-                                <i class="bx bx-x d-block d-sm-none"></i>
-                                <span class="d-none d-sm-block">Batal</span>
-                            </button>
-                            <button type="submit" class="btn btn-primary ml-1">
-                                <i class="bx bx-check d-block d-sm-none"></i>
-                                <span class="d-none d-sm-block">Simpan</span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                </form>
             </div>
         </div>
-    @endforeach
+    </div>
 
 
 
@@ -251,6 +246,55 @@
                     }
                 });
             }
+        </script>
+        <script>
+            document.addEventListener('click', function(e) {
+                // Event delegation untuk tombol Tambah Sub
+                if (e.target.classList.contains('btn-tambah-sub')) {
+                    const currentId = e.target.dataset.id; // Ambil ID
+                    const form = document.querySelector('#formTambahSub'); // Selektor form
+                    const parentIdField = form.querySelector('input[name="parent_id"]'); // Selektor input hidden
+
+                    // Debugging
+                    console.log('Current ID:', currentId);
+
+                    if (form) {
+                        // Perbarui action pada form
+                        form.action = `/kodrek/tambahsub/${currentId}`;
+                        console.log('Form action set to:', form.action);
+
+                        // Set nilai parent_id
+                        if (parentIdField) {
+                            parentIdField.value = currentId;
+                            console.log('Parent ID set to:', parentIdField.value);
+                        } else {
+                            console.error('Input parent_id tidak ditemukan di form.');
+                        }
+                    } else {
+                        console.error('Form #formTambahSub tidak ditemukan.');
+                    }
+                }
+            });
+        </script>
+        <script>
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('btn-ubah')) {
+                    const id = e.target.dataset.id;
+                    const kodeRekening = e.target.dataset.kode;
+                    const uraian = e.target.dataset.uraian;
+
+                    const form = document.querySelector('#formUbahKodeRekening');
+                    const inputKodeRekening = document.querySelector('#editKodeRekening');
+                    const inputUraian = document.querySelector('#editUraian');
+
+                    // Update action URL pada form
+                    form.action = `/kodrek/ubah/${id}`;
+
+                    // Isi data ke input
+                    inputKodeRekening.value = kodeRekening;
+                    inputUraian.value = uraian;
+                }
+            });
         </script>
     @endpush
 </x-layout>

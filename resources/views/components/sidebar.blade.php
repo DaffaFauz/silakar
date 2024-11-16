@@ -14,7 +14,7 @@
         <div class="sidebar-menu">
             <ul class="menu">
                 <li class="sidebar-title">Menu</li>
-                <x-menu-link href="/dashboard" :active="request()->is('/dashboard')" :icon="'bi bi-grid-fill'">Dashboard</x-menu-link>
+                <x-menu-link href="/dashboard" :active="request()->is('dashboard')" :icon="'bi bi-grid-fill'">Dashboard</x-menu-link>
                 @if (Auth::user()->jabatan === 'staff_keuangan')
                     <x-menu-link href="/kodrek" :active="request()->is('kodrek')" :icon="'bi bi-stack'">Kode Rekening</x-menu-link>
                 @endif

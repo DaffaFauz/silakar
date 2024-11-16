@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Anggaran;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class KodeRekening extends Model
 {
@@ -33,5 +34,10 @@ class KodeRekening extends Model
 
     public function childrenRecursive(){
         return $this->hasMany(KodeRekening::class, 'parent_id')->with('childrenRecursive');
+    }
+
+    public function anggarans()
+    {
+        return $this->hasMany(Anggaran::class);
     }
 }

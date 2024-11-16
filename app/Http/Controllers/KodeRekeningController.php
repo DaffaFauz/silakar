@@ -33,7 +33,7 @@ class KodeRekeningController extends Controller
     {
         //
         $rules = [
-            'kode_rekening' => 'required|unique:kode_rekenings',
+            'kode_rekening' => 'required|numeric|unique:kode_rekenings',
             'uraian' => 'required',
         ];
 
@@ -65,7 +65,7 @@ class KodeRekeningController extends Controller
     {
         //
         $rules = [
-            'kode_rekening' => 'required|unique:kode_rekenings',
+            'kode_rekening' => 'required|numeric',
             'uraian' => 'required',
         ];
 
@@ -103,22 +103,6 @@ class KodeRekeningController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(KodeRekening $kodeRekening)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(KodeRekening $kodeRekening)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
@@ -131,7 +115,7 @@ class KodeRekeningController extends Controller
         }
 
         $rules = [
-            'kode_rekening' => 'required|unique:kode_rekenings,kode_rekekning,'. $id,
+            'kode_rekening' => 'required|unique:kode_rekenings,kode_rekening,'. $id,
             'uraian' => 'required',
         ];
 
