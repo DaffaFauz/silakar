@@ -31,7 +31,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/realisasi', [RealisasiController::class, 'index']);
         Route::get('/anggaran', [AnggaranController::class, 'index']);
         Route::post('/anggaran/generate', [AnggaranController::class, 'generateAnggaran']);
-        Route::put('/anggaran/{id}', [AnggaranController::class, 'update']);
+        Route::put('/anggaran/ubah/{id}', [AnggaranController::class, 'update']);
     });
 
     Route::middleware(['role:staff_keuangan|bendahara'])->group(function () {

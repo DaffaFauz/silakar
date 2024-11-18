@@ -29,7 +29,7 @@
                 <div class="d-flex justify-content-start">
                     <div class="col-2 ms-4">
                         <label>Pilih Bulan</label>
-                        <input type="month">
+                        <input type="month" class="form-control">
                     </div>
                 </div>
                 <div class="card-body">

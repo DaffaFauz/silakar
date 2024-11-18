@@ -38,6 +38,6 @@ class KodeRekening extends Model
 
     public function anggarans()
     {
-        return $this->hasMany(Anggaran::class);
+        return $this->hasMany(Anggaran::class, 'kode_rekening_id');
     }
 }

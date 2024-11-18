@@ -15,9 +15,8 @@ return new class extends Migration
         Schema::create('anggarans', function (Blueprint $table){
             $table->id();
             $table->foreignId('kode_rekening_id')->constrained('kode_rekenings')->onDelete('cascade');
-            $table->year('tahun');
+            $table->foreignId('tahun_id')->constrained('tahun')->onDelete('cascade');
             $table->decimal('nominal', 15, 2)->nullable(); // Nilai anggaran
-            $table->unique(['kode_rekening_id', 'tahun']);
             $table->timestamps();
         });
     }
@@ -28,5 +27,11 @@ return new class extends Migration
     public function down(): void
     {
         //
+        Schema::table('anggarans', function (Blueprint $table) {
+            $table->dropForeign(['kode_rekening_id']);
+            $table->dropForeign(['tahun_id']);
+        });
+    
+        Schema::dropIfExists('anggarans');
     }
 };

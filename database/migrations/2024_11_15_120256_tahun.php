@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kode_rekenings', function (Blueprint $table) {
+        //
+        Schema::create('tahun', function(Blueprint $table){
             $table->id();
-            $table->string('kode_rekening')->unique();
-            $table->string('uraian');
-            $table->unsignedBigInteger('parent_id')->nullable();
-            $table->foreign('parent_id')->references('id')->on('kode_rekenings')->onDelete('cascade');
+            $table->year('tahun');
+            $table->integer('bulan')->nullable();
             $table->timestamps();
         });
     }
@@ -26,11 +25,12 @@ return new class extends Migration
      */
     public function down(): void
     {
+        //
         Schema::table('anggarans', function (Blueprint $table) {
-            $table->dropForeign(['kode_rekening_id']);
+            $table->dropForeign(['tahun_id']);
         });
     
         // Drop kode_rekenings
-        Schema::dropIfExists('kode_rekenings');
+        Schema::dropIfExists('tahun');
     }
 };

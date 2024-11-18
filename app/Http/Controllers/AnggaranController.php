@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tahun;
 use App\Models\Anggaran;
 use App\Models\KodeRekening;
 use Illuminate\Http\Request;
@@ -10,39 +11,52 @@ class AnggaranController extends Controller
 {
     //
     public function index(Request $request){
-        $tahun = $request->input('tahun', date('Y'));
+        $tahun = $request->tahun;
 
         // Menampilkan semua kode rekening dan anggarannya untuk tahun tertentu
-        $anggarans = Anggaran::with('kodeRekening')
-                              ->where('tahun', $tahun)
+        $anggarans = Anggaran::with('kodeRekening', 'tahun')
+                              ->when($tahun, function($query) use ($tahun){
+                                $query->whereHas('tahun', function($q) use ($tahun){
+                                    $q->where('tahun', $tahun);
+                                });
+                              })
                               ->get();
+
         return view('anggaran', compact('anggarans', 'tahun'));
     }
 
     public function generateAnggaran(Request $request)
     {
-        $tahun = $request->input('tahun');
-
+        // Validasi input
+        $validated = $request->validate([
+            'tahun' => 'required|integer|min:1900|max:2100', // Validasi range tahun
+        ]);
+    
+        $tahunInput = $validated['tahun'];
+    
+        // Cek apakah tahun sudah ada di tabel tahun
+        $tahun = Tahun::firstOrCreate(
+            ['tahun' => $tahunInput], // Kondisi pencarian
+            ['bulan' => 12] // Default value untuk bulan, sesuaikan dengan kebutuhan
+        );
+    
+        // Ambil ID tahun
+        $tahunId = $tahun->id;
+    
         // Ambil semua kode rekening
-        $kodeRekenings = KodeRekening::all();
+        $kodeRekeningList = KodeRekening::all();
+    
+        foreach($kodeRekeningList as $kodeRekening){
 
-        foreach ($kodeRekenings as $kodeRekening) {
-            // Cek apakah anggaran untuk kode rekening dan tahun ini sudah ada
-            $anggaranExists = Anggaran::where('kode_rekening_id', $kodeRekening->id)
-                                       ->where('tahun', $tahun)
-                                       ->exists();
-
-            if (!$anggaranExists) {
-                // Jika belum ada, buat entri anggaran baru
-                Anggaran::create([
-                    'kode_rekening_id' => $kodeRekening->id,
-                    'tahun' => $tahun,
-                    'nilai' => 0 // Nilai default, bisa diubah nantinya
-                ]);
-            }
+            Anggaran::insert([
+                'kode_rekening_id' => $kodeRekening->id,
+                'tahun_id' => $tahunId,
+                'nominal' => 0,
+            ]);
         }
 
-        return redirect()->back()->with('success', 'Kode Rekening berhasil digenerate untuk tahun ' . $tahun);
+    
+        return redirect()->back()->with('success', 'Anggaran berhasil digenerate');
     }
 
     public function update(Request $request, $id)
@@ -51,7 +65,7 @@ class AnggaranController extends Controller
 
         // Update nilai anggaran
         $anggaran->update([
-            'nilai' => $request->input('nilai')
+            'nominal' => $request->nominal
         ]);
 
         return redirect()->back()->with('success', 'Anggaran berhasil diperbarui.');
