@@ -14,7 +14,6 @@ Route::get('/', [AuthController::class, 'showLoginForm']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/logout', [AuthController::class, 'logout']);
 
-// Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
@@ -27,11 +26,16 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/kodrek/tambahsub/{id}', [KodeRekeningController::class, 'storeChildren']);
         Route::put('/kodrek/ubah/{id}', [KodeRekeningController::class, 'update']);
         Route::delete('/kodrek/hapus/{id}', [KodeRekeningController::class, 'destroy']);
-
-        Route::get('/realisasi', [RealisasiController::class, 'index']);
+        
+        // Rute Anggaran
         Route::get('/anggaran', [AnggaranController::class, 'index']);
         Route::post('/anggaran/generate', [AnggaranController::class, 'generateAnggaran']);
         Route::put('/anggaran/ubah/{id}', [AnggaranController::class, 'update']);
+
+        // Rute Realisasi
+        Route::get('/realisasi', [RealisasiController::class, 'index']);
+        Route::post('/realisasi/generate', [RealisasiController::class, 'generate']);
+        Route::put('/realisasi/update/{id}', [RealisasiController::class, 'update']);
     });
 
     Route::middleware(['role:staff_keuangan|bendahara'])->group(function () {

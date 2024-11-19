@@ -37,7 +37,6 @@ class AnggaranController extends Controller
         // Cek apakah tahun sudah ada di tabel tahun
         $tahun = Tahun::firstOrCreate(
             ['tahun' => $tahunInput], // Kondisi pencarian
-            ['bulan' => 12] // Default value untuk bulan, sesuaikan dengan kebutuhan
         );
     
         // Ambil ID tahun

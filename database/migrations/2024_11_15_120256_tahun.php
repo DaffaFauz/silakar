@@ -15,7 +15,6 @@ return new class extends Migration
         Schema::create('tahun', function(Blueprint $table){
             $table->id();
             $table->year('tahun');
-            $table->integer('bulan')->nullable();
             $table->timestamps();
         });
     }
