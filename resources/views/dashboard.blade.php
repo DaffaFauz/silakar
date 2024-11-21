@@ -17,7 +17,7 @@
                                     </div>
                                     <div class="col-md-8">
                                         <h6 class="text-muted font-semibold">Anggaran Tahun Ini</h6>
-                                        <h6 class="font-extrabold mb-0">112.000</h6>
+                                        <h6 class="font-extrabold mb-0">{{ $totalAnggaran }}</h6>
                                     </div>
                                 </div>
                             </div>
@@ -34,7 +34,7 @@
                                     </div>
                                     <div class="col-md-8">
                                         <h6 class="text-muted font-semibold">Anggaran Terealisasi</h6>
-                                        <h6 class="font-extrabold mb-0">183.000</h6>
+                                        <h6 class="font-extrabold mb-0">{{ $totalRealisasi }}</h6>
                                     </div>
                                 </div>
                             </div>
@@ -45,7 +45,7 @@
                     <div class="col-6">
                         <div class="card">
                             <div class="card-header">
-                                <h4>Visitors Profile</h4>
+                                <h4>Persentase Realisasi Anggaran</h4>
                             </div>
                             <div class="card-body">
                                 <div id="chart-visitors-profile"></div>
@@ -61,7 +61,7 @@
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
         <script>
             let optionsVisitorsProfile = {
-                series: [{{ $anggaran = 50 }}, {{ $realisasi = 50 }}],
+                series: [{{ $totalAnggaran }}, {{ $totalRealisasi }}],
                 labels: ["Anggaran", "Anggaran Terealisasi"],
                 colors: ["#435ebe", "#55c6e8"],
                 chart: {

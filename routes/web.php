@@ -44,6 +44,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Laporan route for all roles
     Route::get('/laporan', [LaporanController::class, 'index']);
+    Route::get('/laporan/realisasi/{bulan}/{tahun}', [LaporanController::class, 'detailRealisasi'])->name('laporan.detail');
+
 
     // Logout route
     Route::post('/logout', [AuthController::class, 'logout']);

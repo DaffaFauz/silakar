@@ -2,12 +2,78 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Models\Tahun;
+use App\Models\Realisasi;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 
 class LaporanController extends Controller
 {
     //
-    public function index(){
-        return view('laporan');
+    public function index(Request $request)
+{
+    // Ambil tahun dari input (jika ada)
+    $tahun = $request->input('tahun');
+
+    // Query realisasi berdasarkan tahun (jika dipilih), jika tidak ambil semua
+    $realisasi = DB::table('realisasis')
+    ->join('anggarans', 'realisasis.anggaran_id', '=', 'anggarans.id')
+    ->select(
+        DB::raw('MONTH(realisasis.bulan) as bulan'),
+        DB::raw('SUM(anggarans.nominal) as total_anggaran'),
+        DB::raw('SUM(realisasis.realisasi_gu + realisasis.realisasi_ls) as total_realisasi')
+    )
+    ->when($tahun, function ($query) use ($tahun) {
+        return $query->where('realisasis.tahun_id', $tahun);
+    })
+    ->groupBy('bulan')
+    ->orderBy('bulan')
+    ->get();
+
+        $t = Tahun::all();
+
+    return view('laporan', compact('realisasi', 't'));
+}
+
+    public function detailRealisasi($bulan, $tahunId)
+    {
+        $tahun = Tahun::findOrFail($tahunId);
+        $realisasiData = Realisasi::where('tahun_id', $tahunId)
+            ->where('bulan', $bulan)
+            ->with(['anggaran.kodeRekening'])
+            ->get();
+
+        $details = $realisasiData->map(function ($realisasi) use($bulan) {
+            $realisasiSdBulanLalu = ($bulan == 1) ? 0 : $realisasi->jumlah_realisasi;
+            $realisasiSdBulanIni = $realisasiSdBulanLalu + $realisasi->realisasi_gu + $realisasi->realisasi_ls;
+
+            return [
+                'kode_rekening' => $realisasi->anggaran->kodeRekening->kode_rekening,
+                'uraian' => $realisasi->anggaran->kodeRekening->uraian,
+                'anggaran' => $realisasi->anggaran->nominal,
+                'realisasi_sd_bulan_lalu' => $realisasiSdBulanLalu == 0 ? '-' : $realisasiSdBulanLalu,
+                'realisasi_gu' => $realisasi->realisasi_gu,
+                'realisasi_ls' => $realisasi->realisasi_ls,
+                'realisasi_sd_bulan_ini' => $realisasiSdBulanIni,
+                'persentase_anggaran' => $realisasi->persentase_anggaran,
+                'saldo_anggaran' => $realisasi->saldo_anggaran,
+            ];
+        });
+
+        // Carbon::create()->month($bulan)->locale('id')->translatedFormat('F');
+
+        $bulanIndonesia = [
+            1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ];
+    
+        $namaBulan = $bulanIndonesia[$bulan];
+
+        $pdf = Pdf::loadView('detail-pdf', compact('details', 'tahun', 'namaBulan'))->setPaper('a4', 'landscape');;
+        return $pdf->stream("Laporan-Detail-{$namaBulan}-{$tahun->tahun}.pdf");
     }
+    
+
 }

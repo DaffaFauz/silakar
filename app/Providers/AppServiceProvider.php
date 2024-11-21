@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\ServiceProvider;
@@ -23,5 +24,7 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         Route::aliasMiddleware('role', RoleMiddleware::class);
+        config(['app.locale' => 'id']);
+	Carbon::setLocale('id');
     }
 }
