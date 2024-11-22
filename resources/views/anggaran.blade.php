@@ -33,13 +33,20 @@
                     </div>
                     <div class="d-flex justify-content-start">
                         <div class="col-2 ms-4">
-                            <label>Pilih Tahun</label>
-                            <select name="tahun" id="" class="form-control">
-                                <option value=""disabled selected>Tahun</option>
-                                @foreach ($anggarans as $t)
-                                    <option value="{{ $t->tahun->id }}">{{ $t->tahun->tahun }}</option>
-                                @endforeach
-                            </select>
+                            <form action="/anggaran" method="GET">
+                                @csrf
+                                <label>Pilih Tahun</label>
+                                <select name="tahun" id="tahun" class="form-control"
+                                    onchange="this.form.submit()">
+                                    <option value="" disabled selected>Tahun</option>
+                                    @foreach ($tahun as $t)
+                                        <option value="{{ $t->id }}"
+                                            {{ request('tahun') == $t->id ? 'selected' : '' }}>
+                                            {{ $t->tahun }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </form>
                         </div>
                     </div>
                     <div class="card-body">
@@ -60,7 +67,7 @@
                                         <td>{{ $no++ }}</td>
                                         <td>{{ $anggaran->kodeRekening->kode_rekening }}</td>
                                         <td>{{ $anggaran->kodeRekening->uraian }}</td>
-                                        <td>{{ $anggaran->nominal }}</td>
+                                        <td>Rp. {{ number_format($anggaran->nominal) }}</td>
                                         <td>
                                             <button type="button" data-bs-toggle="modal"
                                                 data-bs-target="#inlineForm{{ $anggaran->id }}"
@@ -93,7 +100,7 @@
                             <label>Tahun</label>
                             <div class="form-group">
                                 <input type="number" placeholder="YYYY" class="form-control" name="tahun"
-                                    min="2000">
+                                    min="2000" value="{{ \Carbon\Carbon::now()->year }}">
                             </div>
                         </div>
                         <div class="modal-footer">

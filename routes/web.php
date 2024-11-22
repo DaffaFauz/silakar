@@ -27,19 +27,17 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/kodrek/ubah/{id}', [KodeRekeningController::class, 'update']);
         Route::delete('/kodrek/hapus/{id}', [KodeRekeningController::class, 'destroy']);
         
-        // Rute Anggaran
-        Route::get('/anggaran', [AnggaranController::class, 'index']);
-        Route::post('/anggaran/generate', [AnggaranController::class, 'generateAnggaran']);
-        Route::put('/anggaran/ubah/{id}', [AnggaranController::class, 'update']);
-
         // Rute Realisasi
         Route::get('/realisasi', [RealisasiController::class, 'index']);
         Route::post('/realisasi/generate', [RealisasiController::class, 'generate']);
         Route::put('/realisasi/update/{id}', [RealisasiController::class, 'update']);
     });
-
-    Route::middleware(['role:staff_keuangan|bendahara'])->group(function () {
-        // Route::get('/anggaran', [AnggaranController::class, 'index']);
+    
+    // Rute Anggaran
+    Route::middleware(['role:staff_keuangan,bendahara'])->group(function () {
+        Route::get('/anggaran', [AnggaranController::class, 'index']);
+        Route::post('/anggaran/generate', [AnggaranController::class, 'generateAnggaran']);
+        Route::put('/anggaran/ubah/{id}', [AnggaranController::class, 'update']);
     });
 
     // Laporan route for all roles

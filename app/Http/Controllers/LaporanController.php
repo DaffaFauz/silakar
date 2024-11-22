@@ -62,8 +62,6 @@ class LaporanController extends Controller
             ];
         });
 
-        // Carbon::create()->month($bulan)->locale('id')->translatedFormat('F');
-
         $bulanIndonesia = [
             1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
             'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'

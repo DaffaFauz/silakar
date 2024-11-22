@@ -11,16 +11,16 @@ class AnggaranController extends Controller
 {
     //
     public function index(Request $request){
-        $tahun = $request->tahun;
+        $tahun_id = $request->tahun;
 
         // Menampilkan semua kode rekening dan anggarannya untuk tahun tertentu
         $anggarans = Anggaran::with('kodeRekening', 'tahun')
-                              ->when($tahun, function($query) use ($tahun){
-                                $query->whereHas('tahun', function($q) use ($tahun){
-                                    $q->where('tahun', $tahun);
-                                });
-                              })
-                              ->get();
+        ->when($tahun_id, function ($query) use ($tahun_id) {
+            $query->where('tahun_id', $tahun_id); // Pastikan kolom tahun_id sesuai di tabel
+        })
+        ->get();
+
+        $tahun = Tahun::all();
 
         return view('anggaran', compact('anggarans', 'tahun'));
     }
