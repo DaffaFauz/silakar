@@ -1,5 +1,6 @@
+<?php $no = 1; ?>
 <tr>
-    <td>{{ $no[0]++ }}</td>
+    <td><?= $no++ ?></td>
     <td>
         {{ $kodeRekening->kode_rekening }}
     </td>
@@ -22,7 +23,6 @@
         </form>
     </td>
 </tr>
-
 @foreach ($kodeRekening->childrenRecursive as $child)
-    @include('components.kodrek_row', ['kodeRekening' => $child, 'no' => $no])
+    @include('components.kodrek_row', ['kodeRekening' => $child])
 @endforeach

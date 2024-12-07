@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\ServiceProvider;
 

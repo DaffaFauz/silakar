@@ -136,7 +136,12 @@
                                 <label>Nominal Anggaran</label>
                                 <div class="form-group">
                                     <input type="number" placeholder="Nominal Anggaran" class="form-control"
-                                        name="nominal">
+                                        name="nominal" value="{{ $a->nominal }}">
+                                    @if ($errors->has('nominal'))
+                                        <div class="alert alert-danger">
+                                            {{ $errors->first('nominal') }}
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                             <div class="modal-footer">

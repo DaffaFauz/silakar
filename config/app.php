@@ -2,6 +2,7 @@
 
 use Barryvdh\DomPDF\Facade;
 use Barryvdh\DomPDF\ServiceProvider;
+use App\Providers\AuthServiceProvider;
 
 return [
 
@@ -126,6 +127,10 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+//     'providers' => [
+//     // Daftar provider lainnya...
+//     AuthServiceProvider::class,
+// ],
 //     'providers' => [
 //     ServiceProvider::class,
 // ],

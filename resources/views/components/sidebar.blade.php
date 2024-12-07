@@ -3,8 +3,8 @@
         <div class="sidebar-header">
             <div class="d-flex justify-content-between">
                 <div class="logo">
-                    <a href="index.html"><img class="img-fluid w-75 h-auto" src="assets/images/logo/LogoPuskesmas.png"
-                            alt=""></a>
+                    <a href="index.html"><img class="img-fluid w-75 h-auto"
+                            src="{{ asset('assets/images/logo/LogoPuskesmas.png') }}" alt=""></a>
                 </div>
                 <div class="toggler">
                     <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>

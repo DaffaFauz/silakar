@@ -25,11 +25,14 @@
         table td {
             border: 1px solid black;
             padding: 5px;
-            text-align: center;
         }
 
         .text-center {
             text-align: center;
+        }
+
+        .text-justify {
+            text-align: justify;
         }
     </style>
 </head>
@@ -61,14 +64,15 @@
                 <tr>
                     <td>{{ $detail['kode_rekening'] }}</td>
                     <td>{{ $detail['uraian'] }}</td>
-                    <td>{{ number_format($detail['anggaran'], 2) }}</td>
-                    <td>{{ is_numeric($detail['realisasi_sd_bulan_lalu']) ? number_format($detail['realisasi_sd_bulan_lalu'], 2) : $detail['realisasi_sd_bulan_lalu'] }}
+                    <td>Rp. {{ number_format($detail['anggaran'], 2) }}</td>
+                    <td>
+                        {{ is_numeric($detail['realisasi_sd_bulan_lalu']) ? 'Rp.' . number_format($detail['realisasi_sd_bulan_lalu'], 2) : $detail['realisasi_sd_bulan_lalu'] }}
                     </td>
-                    <td>{{ number_format($detail['realisasi_gu'], 2) }}</td>
-                    <td>{{ number_format($detail['realisasi_ls'], 2) }}</td>
-                    <td>{{ number_format($detail['realisasi_sd_bulan_ini'], 2) }}</td>
-                    <td>{{ $detail['persentase_anggaran'] }}%</td>
-                    <td>{{ number_format($detail['saldo_anggaran'], 2) }}</td>
+                    <td class="text-justify">Rp. {{ number_format($detail['realisasi_gu'], 2) }}</td>
+                    <td class="text-justify">Rp. {{ number_format($detail['realisasi_ls'], 2) }}</td>
+                    <td class="text-justify">Rp. {{ number_format($detail['realisasi_sd_bulan_ini'], 2) }}</td>
+                    <td class="text-center">{{ $detail['persentase_anggaran'] }}%</td>
+                    <td class="text-justify">Rp. {{ number_format($detail['saldo_anggaran'], 2) }}</td>
                 </tr>
             @endforeach
         </tbody>

@@ -1,6 +1,6 @@
 <x-layout>
     @push('css')
-        <link rel="stylesheet" href="assets/vendors/simple-datatables/style.css">
+        <link rel="stylesheet" href="{{ asset('assets/vendors/simple-datatables/style.css') }}">
     @endpush
 
     <div class="page-heading">
@@ -32,9 +32,33 @@
                         data-bs-target="#inlineForm"><i class="fa fa-print"></i> Generate Kode Rekening</button>
                 </div>
                 <div class="d-flex justify-content-start">
-                    <div class="col-2 ms-4">
-                        <label>Pilih Bulan</label>
-                        <input type="month" class="form-control">
+                    <div class="col-4 ms-4">
+                        <form action="/realisasi/filter" method="get" class="row">
+                            <div class="col">
+                                <label>Pilih Tahun</label>
+                                <select name="tahun" id="" class="form-control">
+                                    <option value="" selected disabled>- Tahun -</option>
+                                    @foreach ($tahun as $t)
+                                        <option value="{{ $t->id }}"
+                                            {{ request('tahun') == $t->id ? 'selected' : '' }}>{{ $t->tahun }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label>Pilih Bulan</label>
+                                <select name="bulan" id="" onchange="this.form.submit()"
+                                    class="form-control">
+                                    <option value="" selected disabled>- Bulan -</option>
+                                    @foreach ($bulanData as $b)
+                                        <option value="{{ $b->bulan }}"
+                                            {{ request('bulan') == $b->bulan ? 'selected' : '' }}>
+                                            {{ \Carbon\Carbon::createFromFormat('!m', $b->bulan)->translatedFormat('F') }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </form>
                     </div>
                 </div>
                 <div class="card-body">
@@ -59,16 +83,20 @@
                             @foreach ($realisasi as $index => $r)
                                 <tr>
                                     <td>{{ $no++ }}</td>
-                                    <td>{{ $r->anggaran->kodeRekening->kode_rekening }}</td>
+                                    <td>{{ $r->anggaran->KodeRekening->kode_rekening }}</td>
                                     <td>{{ $r->anggaran->kodeRekening->uraian }}</td>
                                     <td>Rp. {{ number_format($r->anggaran->nominal, 0, ',', '.') }}</td>
                                     <td>Rp. {{ number_format($r->realisasi_gu, 0, ',', '.') }}</td>
                                     <td>Rp. {{ number_format($r->realisasi_ls, 0, ',', '.') }}</td>
                                     <td>Rp. {{ number_format($r->saldo_anggaran, 0, ',', '.') }}</td>
                                     <td>
+                                        {{-- @if ($r->KodeRekening->children->isEmpty()) --}}
                                         <button type="button" data-bs-toggle="modal"
                                             data-bs-target="#inlineForm{{ $r->id }}"
                                             class="btn btn-warning rounded-circle"><i class="fa fa-edit"></i></button>
+                                        {{-- @else
+                                            -
+                                        @endif --}}
                                     </td>
                                 </tr>
                             @endforeach
@@ -91,7 +119,7 @@
                         <i data-feather="x"></i>
                     </button>
                 </div>
-                <form action="/realisasi/generate" method="post">
+                <form action="{{ url('/realisasi/generate') }}" method="post">
                     @csrf
                     <div class="modal-body">
                         @if ($errors->any())
@@ -109,7 +137,8 @@
                                 <option value="" selected disabled>-- Pilih Bulan --</option>
                                 @for ($i = 1; $i <= 12; $i++)
                                     <option value="{{ $i }}" {{ old('bulan') == $i ? 'selected' : '' }}>
-                                        {{ DateTime::createFromFormat('!m', $i)->format('F') }}</option>
+                                        {{ \Carbon\Carbon::createFromFormat('!m', $i)->translatedFormat('F') }}
+                                    </option>
                                 @endfor
                             </select>
                         </div>
@@ -149,7 +178,7 @@
                             <i data-feather="x"></i>
                         </button>
                     </div>
-                    <form action="realisasi/update/{{ $r->id }}" method="post">
+                    <form action="{{ url('realisasi/update/' . $r->id) }}" method="post">
                         @csrf
                         @method('PUT')
                         <div class="modal-body">
@@ -181,7 +210,7 @@
     @endforeach
 
     @push('js')
-        <script src="assets/vendors/simple-datatables/simple-datatables.js"></script>
+        <script src="{{ asset('assets/vendors/simple-datatables/simple-datatables.js') }}"></script>
         <script>
             // Simple Datatable
             let table1 = document.querySelector('#table1');

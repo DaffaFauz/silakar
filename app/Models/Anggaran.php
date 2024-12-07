@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Tahun;
+use App\Models\Realisasi;
 use App\Models\KodeRekening;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,5 +19,9 @@ class Anggaran extends Model
 
     public function tahun(){
         return $this->belongsTo(Tahun::class);
+    }
+
+    public function realisasi(){
+        return $this->hasMany(Realisasi::class);
     }
 }

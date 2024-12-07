@@ -29,6 +29,7 @@ Route::middleware(['auth'])->group(function () {
         
         // Rute Realisasi
         Route::get('/realisasi', [RealisasiController::class, 'index']);
+        Route::get('/realisasi/filter', [RealisasiController::class, 'filter']);
         Route::post('/realisasi/generate', [RealisasiController::class, 'generate']);
         Route::put('/realisasi/update/{id}', [RealisasiController::class, 'update']);
     });

@@ -30,10 +30,9 @@
                         <form action="/laporan" method="GET">
                             <select name="tahun" id="tahun" class="form-control" onchange="this.form.submit()">
                                 <option value="" disabled selected>Tahun</option>
-                                @foreach ($t as $tahun)
-                                    <option value="{{ $tahun->id }}"
-                                        {{ request('tahun') == $tahun->id ? 'selected' : '' }}>
-                                        {{ $tahun->tahun }}
+                                @foreach ($t as $thn)
+                                    <option value="{{ $thn->id }}" {{ $tahun == $thn->id ? 'selected' : '' }}>
+                                        {{ $thn->tahun }}
                                     </option>
                                 @endforeach
                             </select>
@@ -55,33 +54,35 @@
                             <?php $no = 1; ?>
                             @foreach ($realisasi as $r)
                                 @php
-                                    $bulan = intval($r->bulan + 1); // Pastikan bulan berupa angka
+                                    // Pastikan bulan berupa angka
+                                    $bulan = $r->bulan;
+
+                                    // Daftar bulan dalam bahasa Indonesia
                                     $bulanIndonesia = [
                                         1 => 'Januari',
-                                        'Februari',
-                                        'Maret',
-                                        'April',
-                                        'Mei',
-                                        'Juni',
-                                        'Juli',
-                                        'Agustus',
-                                        'September',
-                                        'Oktober',
-                                        'November',
-                                        'Desember',
+                                        2 => 'Februari',
+                                        3 => 'Maret',
+                                        4 => 'April',
+                                        5 => 'Mei',
+                                        6 => 'Juni',
+                                        7 => 'Juli',
+                                        8 => 'Agustus',
+                                        9 => 'September',
+                                        10 => 'Oktober',
+                                        11 => 'November',
+                                        12 => 'Desember',
                                     ];
 
+                                    // Tentukan nama bulan atau tampilkan pesan error jika bulan tidak valid
                                     $namaBulan =
-                                        $bulan >= 1 && $bulan <= 12
-                                            ? ($namaBulan = $bulanIndonesia[$bulan])
-                                            : 'Invalid Month';
+                                        $bulan >= 1 && $bulan <= 12 ? $bulanIndonesia[$bulan] : 'Invalid Month';
                                 @endphp
                                 <tr>
                                     <td>{{ $no++ }}</td>
                                     <td>{{ $namaBulan }}</td>
-                                    <td>{{ $r->total_anggaran }}</td>
-                                    <td>{{ $r->total_realisasi }}</td>
-                                    <td><a href="/laporan/realisasi/{{ $r->bulan + 1 }}/{{ request('tahun') }}"
+                                    <td>Rp. {{ number_format($r->total_anggaran) }}</td>
+                                    <td>Rp. {{ number_format($r->total_realisasi) }}</td>
+                                    <td><a href="/laporan/realisasi/{{ $r->bulan }}/{{ request('tahun') }}"
                                             class="btn btn-secondary rounded-circle"><i class="fa fa-eye"></i></a>
                                     </td>
                                 </tr>

@@ -50,11 +50,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <?php $no = [1]; ?>
                             @foreach ($kodeRekenings as $k)
                                 @include('components.kodrek_row', [
                                     'kodeRekening' => $k,
-                                    'no' => $no,
                                 ])
                             @endforeach
                         </tbody>

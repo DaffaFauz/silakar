@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Anggaran;
+use App\Models\Realisasi;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -39,5 +40,10 @@ class KodeRekening extends Model
     public function anggarans()
     {
         return $this->hasMany(Anggaran::class, 'kode_rekening_id');
+    }
+
+    public function isLeaf()
+    {
+        return !$this->children()->exists();
     }
 }
