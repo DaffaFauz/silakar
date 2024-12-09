@@ -22,9 +22,23 @@ class DashboardController extends Controller
             ]);
         }
 
-        $totalAnggaran = Anggaran::where('tahun_id', $tahunAktif->id)->sum('nominal');
-        $totalRealisasi = Realisasi::where('tahun_id', $tahunAktif->id)->sum('jumlah_realisasi');
-    
+        // ID Induk kode rekening pertama
+        $indukKodeRekeningId = 1; // Ganti dengan ID aktual induk kode rekening
+
+        // Ambil data anggaran langsung dari induk kode rekening
+        $anggaranInduk = Anggaran::where('tahun_id', $tahunAktif->id)
+            ->where('kode_rekening_id', $indukKodeRekeningId)
+            ->first();
+
+        $totalAnggaran = $anggaranInduk ? $anggaranInduk->nominal : 0;
+
+        // Ambil data realisasi langsung dari induk kode rekening
+        $realisasiInduk = Realisasi::where('tahun_id', $tahunAktif->id)
+            ->where('anggaran_id', $anggaranInduk ? $anggaranInduk->id : null)
+            ->first();
+
+        $totalRealisasi = $realisasiInduk ? $realisasiInduk->jumlah_realisasi : 0;
+
         return view('dashboard', [
             'totalAnggaran' => $totalAnggaran,
             'totalRealisasi' => $totalRealisasi,
