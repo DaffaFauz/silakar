@@ -43,13 +43,14 @@
                     <table class="table table-striped" id="table1">
                         <thead>
                             <tr>
-                                <th>No</th>
+                                <!-- <th>No</th> -->
                                 <th>Kode Rekening</th>
                                 <th>Uraian</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
+                        <!-- @php $no = 1; @endphp -->
                             @foreach ($kodeRekenings as $k)
                                 @include('components.kodrek_row', [
                                     'kodeRekening' => $k,
