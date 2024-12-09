@@ -13,29 +13,30 @@ class LaporanController extends Controller
 {
     //
     public function index(Request $request)
-{
-    // Ambil tahun dari input (jika ada)
-    $tahun = $request->input('tahun', now()->year);
-
-    // Query realisasi berdasarkan tahun (jika dipilih), jika tidak ambil semua
-    $realisasi = DB::table('realisasis')
-    ->join('anggarans', 'realisasis.anggaran_id', '=', 'anggarans.id')
-    ->select(
-        DB::raw('realisasis.bulan as bulan'),
-        DB::raw('SUM(anggarans.nominal) as total_anggaran'),
-        DB::raw('SUM(realisasis.realisasi_gu + realisasis.realisasi_ls) as total_realisasi')
-    )
-    ->where('realisasis.tahun_id', $tahun)
-    ->groupBy('realisasis.bulan')
-    ->orderBy('realisasis.bulan')
-    ->get();
-
-    // dd($realisasi);
-
+    {
+        // Ambil tahun dari input (jika ada)
+        $tahun = $request->input('tahun', now()->year);
+    
+        // Query hanya untuk induk kode rekening
+        $realisasi = DB::table('realisasis')
+            ->join('anggarans', 'realisasis.anggaran_id', '=', 'anggarans.id')
+            ->join('kode_rekenings', 'anggarans.kode_rekening_id', '=', 'kode_rekenings.id')
+            ->select(
+                'realisasis.bulan as bulan',
+                'kode_rekenings.kode_rekening as kode_rekening',
+                'kode_rekenings.uraian as uraian',
+                'anggarans.nominal as total_anggaran', // Ambil langsung anggaran dari induk
+                'realisasis.jumlah_realisasi as total_realisasi' // Ambil langsung realisasi dari induk
+            )
+            ->where('realisasis.tahun_id', $tahun)
+            ->whereNull('kode_rekenings.parent_id') // Hanya induk kode rekening
+            ->orderBy('realisasis.bulan')
+            ->get();
+    
         $t = Tahun::all();
-
-    return view('laporan', compact('realisasi', 't', 'tahun'));
-}
+    
+        return view('laporan', compact('realisasi', 't', 'tahun'));
+    }
 
     public function detailRealisasi($bulan, $tahunId)
     {
