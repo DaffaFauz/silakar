@@ -16,11 +16,11 @@ return new class extends Migration
             $table->foreignId('tahun_id')->constrained('tahun')->onDelete('cascade');
             $table->foreignId('anggaran_id')->constrained('anggarans')->onDelete('cascade');
             $table->integer('bulan'); // 1-12
-            $table->integer('realisasi_ls')->default(0); // Realisasi langsung
-            $table->integer('realisasi_gu')->default(0); // Ganti uang
-            $table->integer('jumlah_realisasi')->default(0);
-            $table->integer('persentase_anggaran')->default(0); // Dalam persen
-            $table->integer('saldo_anggaran')->default(0);
+            $table->bigInteger('realisasi_ls')->default(0); // Realisasi langsung
+            $table->bigInteger('realisasi_gu')->default(0); // Ganti uang
+            $table->bigInteger('jumlah_realisasi')->default(0);
+            $table->bigInteger('persentase_anggaran')->default(0); // Dalam persen
+            $table->bigInteger('saldo_anggaran')->default(0);
             $table->timestamps();
         });
     }

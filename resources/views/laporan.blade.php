@@ -46,7 +46,7 @@
                                 <th>No</th>
                                 <th>Bulan</th>
                                 <th>Anggaran</th>
-                                <th>Realisasi Bulan Ini</th>
+                                <th>Realisasi</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>

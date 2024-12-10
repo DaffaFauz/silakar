@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('kode_rekening_id')->constrained('kode_rekenings')->onDelete('cascade');
             $table->foreignId('tahun_id')->constrained('tahun')->onDelete('cascade');
-            $table->decimal('nominal', 15, 2)->nullable(); // Nilai anggaran
+            $table->bigInteger('nominal')->nullable(); // Nilai anggaran
             $table->timestamps();
         });
     }
