@@ -34,8 +34,9 @@ class DashboardController extends Controller
 
         // Ambil data realisasi langsung dari induk kode rekening
         $realisasiInduk = Realisasi::where('tahun_id', $tahunAktif->id)
-            ->where('anggaran_id', $anggaranInduk ? $anggaranInduk->id : null)
-            ->first();
+        ->where('anggaran_id', $anggaranInduk ? $anggaranInduk->id : null)
+        ->orderBy('created_at', 'desc') // Urutkan berdasarkan tanggal terbaru
+        ->first();
 
         $totalRealisasi = $realisasiInduk ? $realisasiInduk->jumlah_realisasi : 0;
 
