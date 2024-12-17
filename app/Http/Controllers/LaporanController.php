@@ -46,15 +46,21 @@ class LaporanController extends Controller
             ->with(['anggaran.kodeRekening'])
             ->get();
 
-        $details = $realisasiData->map(function ($realisasi) use($bulan) {
-            $realisasiSdBulanLalu = ($bulan == 1) ? 0 : $realisasi->jumlah_realisasi;
-            $realisasiSdBulanIni = $realisasiSdBulanLalu + $realisasi->realisasi_gu + $realisasi->realisasi_ls;
+        $details = $realisasiData->map(function ($realisasi) use($bulan, $tahunId) {
+            $bulanSebelumnya = $bulan - 1;
+            $realisasiSebelumnya = ($bulan == 1) ? 0 : Realisasi::where('tahun_id', $tahunId)
+            ->where('bulan', $bulanSebelumnya)
+            ->where('anggaran_id', $realisasi->anggaran_id) // Cocokkan anggaran_id
+            ->first();
+
+            $realisasiBulanLalu = $realisasiSebelumnya ? $realisasiSebelumnya->jumlah_realisasi : 0;
+            $realisasiSdBulanIni = $realisasiBulanLalu + $realisasi->realisasi_gu + $realisasi->realisasi_ls;
 
             return [
                 'kode_rekening' => $realisasi->anggaran->kodeRekening->kode_rekening,
                 'uraian' => $realisasi->anggaran->kodeRekening->uraian,
                 'anggaran' => $realisasi->anggaran->nominal,
-                'realisasi_sd_bulan_lalu' => $realisasiSdBulanLalu == 0 ? '-' : $realisasiSdBulanLalu,
+                'realisasi_sd_bulan_lalu' => $realisasiBulanLalu == 0 ? '-' : $realisasiBulanLalu,
                 'realisasi_gu' => $realisasi->realisasi_gu,
                 'realisasi_ls' => $realisasi->realisasi_ls,
                 'realisasi_sd_bulan_ini' => $realisasiSdBulanIni,

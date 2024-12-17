@@ -28,35 +28,8 @@ class RealisasiController extends Controller
         return view('realisasi', compact('tahun', 'bulanData', 'realisasi', 'indukRekening'));
     }
 
-    public function generate(Request $request){
-    $validated = $request->validate([
-            'tahun' => 'required',
-            'bulan' => 'required',
-        ]);
-
-        $anggaran = Anggaran::where('tahun_id', $validated['tahun'])->get();
-        if ($anggaran->isEmpty()) {
-            return redirect()->back()->with('error', 'Data anggaran tidak ditemukan untuk tahun ini.');
-        }
-
-        foreach ($anggaran as $item) {
-            Realisasi::insert(
-                [
-                    'tahun_id' => $request->tahun,
-                    'bulan' => $request->bulan,
-                    'anggaran_id' => $item->id,
-                    'realisasi_ls' => 0,
-                    'realisasi_gu' => 0,
-                    'jumlah_realisasi' => 0,
-                    'persentase_anggaran' => 0,
-                    'saldo_anggaran' => $item->nominal, // Anggaran awal
-                ]
-            );
-        }
-        
-
-        return redirect()->back()->with('success', 'Data berhasil di-generate.');
-}
+    
+    
 
 public function filter(Request $request)
 {
@@ -88,6 +61,61 @@ public function filter(Request $request)
     return view('realisasi', compact('tahun', 'realisasi', 'bulanData'));
 }
 
+public function generate(Request $request)
+{
+    $validated = $request->validate([
+        'tahun' => 'required|exists:tahun,id',
+        'bulan' => 'required|integer|min:1|max:12',
+    ]);
+
+    $anggaran = Anggaran::where('tahun_id', $validated['tahun'])->get();
+
+    if ($anggaran->isEmpty()) {
+        return redirect()->back()->with('error', 'Data anggaran tidak ditemukan untuk tahun ini.');
+    }
+
+    foreach ($anggaran as $item) {
+        $existingRealisasi = Realisasi::where('tahun_id', $validated['tahun'])
+            ->where('bulan', $validated['bulan'])
+            ->where('anggaran_id', $item->id)
+            ->first();
+
+        if ($existingRealisasi) continue;
+
+        $bulanLalu = $validated['bulan'] - 1;
+
+        $realisasiBulanLalu = Realisasi::where('anggaran_id', $item->id)
+            ->where('tahun_id', $validated['tahun'])
+            ->where('bulan', '=', $bulanLalu)
+            ->value('jumlah_realisasi');
+
+        // Ambil saldo_anggaran dari bulan sebelumnya
+        $saldoAnggaranBulanSebelumnya = Realisasi::where('anggaran_id', $item->id)
+            ->where('tahun_id', $validated['tahun'])
+            ->where('bulan', $validated['bulan'] - 1) // Ambil bulan sebelumnya
+            ->value('saldo_anggaran');
+
+        // Jika tidak ada saldo_anggaran dari bulan sebelumnya, set ke nominal
+        if (is_null($saldoAnggaranBulanSebelumnya)) {
+            $saldoAnggaranBulanSebelumnya = $item->nominal;
+        }
+
+        // Buat entri baru untuk bulan ini
+        Realisasi::create([
+            'tahun_id' => $validated['tahun'],
+            'bulan' => $validated['bulan'],
+            'anggaran_id' => $item->id,
+            'realisasi_ls' => 0,
+            'realisasi_gu' => 0,
+            'jumlah_realisasi' => $realisasiBulanLalu == null ? 0 : $realisasiBulanLalu, // Ini tetap diambil dari bulan sebelumnya
+            'persentase_anggaran' => 0,
+            'saldo_anggaran' => $saldoAnggaranBulanSebelumnya, // Set saldo_anggaran dari bulan sebelumnya
+        ]);
+    }
+
+    return redirect()->back()->with('success', 'Data berhasil di-generate.');
+}
+
 
 public function update(Request $request, $id)
 {
@@ -96,16 +124,23 @@ public function update(Request $request, $id)
         'realisasi_gu' => 'required|numeric|min:0',
     ]);
 
-    $realisasi = Realisasi::find($id);
+    $realisasi = Realisasi::findOrFail($id);
     $anggaran = $realisasi->anggaran;
 
     if (!$anggaran) {
         return redirect()->back()->with('error', 'Anggaran terkait tidak ditemukan.');
     }
 
-    $jumlahRealisasi = $validated['realisasi_ls'] + $validated['realisasi_gu'];
+    $bulanLalu = $realisasi->bulan - 1;
+
+    $realisasiBulanLalu = Realisasi::where('anggaran_id', $anggaran->id)
+    ->where('tahun_id', $realisasi->tahun_id)
+    ->where('bulan', '=', $bulanLalu)
+    ->value('jumlah_realisasi');
+
+    $jumlahRealisasi = $realisasiBulanLalu + $validated['realisasi_ls'] + $validated['realisasi_gu'];
     $saldoAnggaran = $anggaran->nominal - $jumlahRealisasi;
-    $persentaseAnggaran = $jumlahRealisasi > 0 ? ($jumlahRealisasi / $anggaran->nominal) * 100 : 0;
+    $persentaseAnggaran = ($jumlahRealisasi / $anggaran->nominal) * 100;
 
     $realisasi->update([
         'realisasi_ls' => $request->realisasi_ls,
@@ -115,15 +150,14 @@ public function update(Request $request, $id)
         'saldo_anggaran' => $saldoAnggaran,
     ]);
 
-
-    // dd($anggaran->kodeRekening);
-
-    $this->updateParentRealisasi($anggaran->kodeRekening);
+    // Update realisasi induk hanya untuk bulan yang diubah
+    $this->updateParentRealisasi($anggaran->kodeRekening, $realisasi->bulan);
 
     return redirect()->back()->with('success', 'Data realisasi berhasil diperbarui.');
 }
 
-private function updateParentRealisasi($kodeRekening)
+
+private function updateParentRealisasi($kodeRekening, $bulan)
 {
     while ($kodeRekening->parent) {
         $parent = $kodeRekening->parent;
@@ -131,31 +165,40 @@ private function updateParentRealisasi($kodeRekening)
         // Ambil semua anggaran dari sub kode rekening
         $childAnggarans = $parent->children->map->anggarans->flatten();
 
-        // Hitung total realisasi langsung (realisasi_ls) dan ganti uang (realisasi_gu) dari semua anak
-        $realisasiGU = $childAnggarans->map(function ($anggaran) {
-            return $anggaran->realisasi->sum('realisasi_gu');
+        // Hitung realisasi GU dan LS hanya untuk bulan tertentu
+        $realisasiGU = $childAnggarans->map(function ($anggaran) use ($bulan) {
+            return $anggaran->realisasi->where('bulan', $bulan)->sum('realisasi_gu');
         })->sum();
 
-        $realisasiLS = $childAnggarans->map(function ($anggaran) {
-            return $anggaran->realisasi->sum('realisasi_ls');
+        $realisasiLS = $childAnggarans->map(function ($anggaran) use ($bulan) {
+            return $anggaran->realisasi->where('bulan',$bulan)->sum('realisasi_ls');
         })->sum();
 
-        // Ambil nominal anggaran induk dari anggaran parent langsung
+// Tambahkan realisasiBulanLalu (akumulasi hingga bulan sebelumnya)
+$realisasiBulanLalu = $childAnggarans->map(function ($anggaran) use ($bulan) {
+    return $anggaran->realisasi
+        ->where('bulan', '<', $bulan) // Ambil semua realisasi hingga bulan sebelumnya
+        ->sum(function ($item) {
+            return $item->realisasi_gu + $item->realisasi_ls; // Total GU dan LS
+        });
+})->sum();
+
+        // Ambil nominal anggaran induk
         $nominalInduk = $parent->anggarans->first()->nominal;
 
         // Hitung jumlah realisasi, saldo anggaran, dan persentase anggaran
-        $jumlahRealisasi = $realisasiGU + $realisasiLS;
+        $jumlahRealisasi = $realisasiBulanLalu + $realisasiGU + $realisasiLS;
         $saldoAnggaran = $nominalInduk - $jumlahRealisasi;
         $persentaseAnggaran = $jumlahRealisasi > 0
             ? ($jumlahRealisasi / $nominalInduk) * 100
             : 0;
 
-        // Update atau buat data realisasi pada induk
+        // Update atau buat data realisasi pada induk untuk bulan tersebut
         Realisasi::updateOrCreate(
             [
                 'anggaran_id' => $parent->anggarans->first()->id,
                 'tahun_id' => $childAnggarans->first()->tahun_id,
-                'bulan' => $childAnggarans->first()->realisasi->first()->bulan,
+                'bulan' => $bulan,
             ],
             [
                 'realisasi_gu' => $realisasiGU,
@@ -170,5 +213,7 @@ private function updateParentRealisasi($kodeRekening)
         $kodeRekening = $parent;
     }
 }
+
+
 
 }
